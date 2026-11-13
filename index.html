@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refuerzo de Geometría • Aula Virtual Marymount</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .font-google {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+        }
+        /* Custom subtle scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-toast {
+            animation: fadeSlideUp 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-100 selection:text-emerald-900">
+
+    <!-- ================= INITIAL AUTH / LOGIN LANDING OVERLAY ================= -->
+    <div id="auth-landing-screen" class="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden border border-gray-100 grid grid-cols-1 lg:grid-cols-12 my-auto">
+            <!-- Left Branding Column -->
+            <div class="lg:col-span-5 bg-gradient-to-br from-emerald-800 via-teal-700 to-indigo-900 text-white p-7 sm:p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-2xl mb-5 border border-white/20">
+                        📐
+                    </div>
+                    <span class="inline-block text-[11px] font-bold uppercase tracking-wider bg-white/15 px-3 py-1 rounded-full mb-3">
+                        Colegio Marymount • Barranquilla
+                    </span>
+                    <h2 class="font-google font-extrabold text-2xl sm:text-3xl leading-tight">
+                        Aula Virtual de Geometría
+                    </h2>
+                    <p class="text-emerald-100 text-xs sm:text-sm mt-3 leading-relaxed">
+                        Espacio oficial para actividades de refuerzo, Quizzes en NotebookLM, plataformas interactivas y entregas de 7th y 8th Grade.
+                    </p>
+                </div>
+
+                <!-- Direct Teacher Access Box inside Landing -->
+                <div class="mt-8 pt-6 border-t border-white/15">
+                    <p class="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-key"></i> Acceso Directo Docente
+                    </p>
+                    <form id="landing-teacher-pin-form" onsubmit="handleLandingTeacherLogin(event)" class="flex gap-2">
+                        <input type="password" id="landing-teacher-pin" placeholder="Ingresa el PIN" autocomplete="off"
+                            class="flex-1 min-w-0 bg-white/10 border border-white/25 rounded-xl px-3.5 py-2 text-xs text-white placeholder-emerald-200/70 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold text-xs px-4 py-2 rounded-xl transition-colors whitespace-nowrap shadow-sm cursor-pointer">
+                            Entrar
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Student Registration / Login Column -->
+            <div class="lg:col-span-7 p-7 sm:p-8 bg-white">
+                <div class="mb-5">
+                    <h3 class="font-google font-bold text-xl text-gray-900">Ingreso de Estudiantes</h3>
+                    <p class="text-xs text-gray-500 mt-1">Usa tu correo institucional <strong>@marymountbq.edu.co</strong> para ingresar o continuar tu progreso.</p>
+                </div>
+
+                <form id="student-login-form" onsubmit="handleStudentRegisterSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre y Apellido Completo</label>
+                        <input type="text" id="reg-name" required placeholder="Ej: Sofía Martínez"
+                            class="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Correo Institucional</label>
+                        <input type="email" id="reg-email" required placeholder="nombre.apellido@marymountbq.edu.co"
+                            class="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Grado</label>
+                            <select id="reg-grade" required class="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="7th">7th Grade (Séptimo)</option>
+                                <option value="8th">8th Grade (Octavo)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Salón / Casa</label>
+                            <select id="reg-house" required class="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="Yellow">🟡 Yellow</option>
+                                <option value="Blue">🔵 Blue</option>
+                                <option value="Red">🔴 Red</option>
+                                <option value="Green">🟢 Green</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Ingresar al Aula Virtual</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TOP NAVIGATION BAR ================= -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Left: Mobile Sidebar Toggle + Brand -->
+            <div class="flex items-center gap-3 min-w-0">
+                <button onclick="toggleMobileSidebar()" class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors" aria-label="Abrir menú">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div onclick="switchTab('home')" class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center text-lg shadow-xs cursor-pointer shrink-0">
+                    📐
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2.5">
+                        <h1 id="header-brand-title" class="font-google font-bold text-gray-900 text-base sm:text-lg leading-none truncate">Refuerzo de Geometría</h1>
+                        <span id="sync-status-badge" class="hidden md:inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Conectando...
+                        </span>
+                    </div>
+                    <p id="header-brand-subtitle" class="text-xs text-gray-500 font-medium hidden sm:block mt-1 truncate">Aula Virtual • 7th & 8th Grade</p>
+                </div>
+            </div>
+
+            <!-- Right Header Controls: Notifications, User Profile & Teacher Options -->
+            <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+                <!-- Notifications Bell -->
+                <div class="relative">
+                    <button id="notif-bell-btn" onclick="toggleNotificationsDropdown()" class="relative p-2.5 rounded-xl text-gray-600 hover:bg-gray-100 border border-gray-200 transition-colors cursor-pointer" title="Notificaciones">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span id="notif-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">0</span>
+                    </button>
+                    <!-- Notifications Dropdown -->
+                    <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-200 z-40 overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                            <span class="font-google font-bold text-xs text-gray-800">Notificaciones Recientes</span>
+                            <button onclick="markAllNotificationsRead()" class="text-[11px] font-semibold text-emerald-700 hover:underline cursor-pointer">Marcar leídas</button>
+                        </div>
+                        <div id="notif-list" class="max-h-80 overflow-y-auto divide-y divide-gray-100"></div>
+                    </div>
+                </div>
+
+                <!-- Active User Profile Pill -->
+                <div id="user-profile-pill" class="hidden sm:flex items-center gap-2.5 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-2xl">
+                    <img id="user-avatar" src="https://placehold.co/100x100/0f9d58/ffffff?text=U" alt="Avatar" class="w-7 h-7 rounded-full object-cover border border-gray-300">
+                    <div class="leading-tight">
+                        <p id="user-display-name" class="text-xs font-bold text-gray-900 whitespace-nowrap">Usuario</p>
+                        <p id="user-badge-info" class="text-[10px] font-semibold text-gray-500 whitespace-nowrap">Estudiante</p>
+                    </div>
+                    <button onclick="signOutUser()" title="Cambiar usuario / Salir" class="ml-1 text-gray-400 hover:text-rose-600 p-1 rounded-lg transition-colors cursor-pointer">
+                        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Teacher Mode Button -->
+                <button id="teacher-role-btn" onclick="openTeacherUnlockModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 transition-colors whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-key text-amber-500"></i>
+                    <span>Modo Profesor</span>
+                </button>
+
+                <!-- Teacher Quick Create Buttons -->
+                <button id="btn-new-ann-header" onclick="openNewAnnouncementModal('all')" class="hidden inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-colors whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span class="hidden md:inline">Nuevo Anuncio</span>
+                </button>
+
+                <button id="btn-new-post-header" onclick="openNewPostModal('7th')" class="hidden inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="hidden md:inline">Nueva Actividad</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= APP SHELL: LEFT SIDEBAR + MAIN CONTENT ================= -->
+    <div class="flex-1 flex max-w-[1600px] w-full mx-auto relative">
+
+        <!-- Mobile Sidebar Backdrop -->
+        <div id="sidebar-overlay" onclick="closeMobileSidebar()" class="hidden fixed inset-0 bg-slate-900/50 z-30 lg:hidden"></div>
+
+        <!-- Left Navigation Sidebar (side) -->
+        <aside id="app-sidebar" class="fixed lg:sticky top-16 left-0 z-30 h-[calc(100vh-4rem)] w-68 shrink-0 bg-white border-r border-gray-200 p-4 flex flex-col justify-between transition-transform duration-200 -translate-x-full lg:translate-x-0 overflow-y-auto">
+            <div class="space-y-6">
+                <!-- Section 1: Aula Virtual -->
+                <div>
+                    <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2">Aula Virtual</p>
+                    <nav class="space-y-1">
+                        <button id="nav-home" onclick="switchTab('home')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 transition-all cursor-pointer">
+                            <i class="fa-solid fa-house w-4 text-center"></i>
+                            <span>Inicio (Tablón General)</span>
+                        </button>
+                        <button id="nav-7th" onclick="switchTab('7th')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
+                            <span class="w-4 text-center text-xs">🟢</span>
+                            <span>7th Grade</span>
+                        </button>
+                        <button id="nav-8th" onclick="switchTab('8th')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
+                            <span class="w-4 text-center text-xs">🔵</span>
+                            <span>8th Grade</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Section 2: Herramientas de Geometría -->
+                <div>
+                    <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2">Recursos y Temas</p>
+                    <nav class="space-y-1">
+                        <button id="nav-tools" onclick="switchTab('tools')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
+                            <span class="w-4 text-center text-sm">📐</span>
+                            <span>Herramientas de Geometría</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Section 3: Panel Exclusivo Docente -->
+                <div id="sidebar-teacher-section" class="hidden">
+                    <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-amber-600 mb-2">Panel Docente</p>
+                    <nav class="space-y-1">
+                        <button id="nav-teacher-panel" onclick="switchTab('teacher-panel')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-gray-700 hover:bg-amber-50 transition-all cursor-pointer">
+                            <span class="flex items-center gap-3">
+                                <i class="fa-solid fa-filter w-4 text-center text-amber-600"></i>
+                                <span>Revisar Alumnos</span>
+                            </span>
+                            <span id="sidebar-pending-badge" class="hidden bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer Info -->
+            <div class="pt-4 border-t border-gray-100 space-y-2">
+                <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/80">
+                    <p class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-compass-drafting text-emerald-600"></i> Geometría Marymount
+                    </p>
+                    <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                        Organizado por Trimestres, Learning Intentions y actividades semanales.
+                    </p>
+                </div>
+                <button onclick="signOutUser()" class="sm:hidden w-full text-left px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cambiar de cuenta
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Container -->
+        <main class="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+            <!-- Teacher Student-View Preview Banner -->
+            <div id="teacher-preview-banner" class="hidden bg-indigo-900 text-white px-4 py-3 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-3 border border-indigo-700">
+                <div class="flex items-center gap-2.5 text-xs sm:text-sm">
+                    <span class="bg-indigo-700 px-2.5 py-1 rounded-lg font-bold">👁️ Vista Previa Estudiante</span>
+                    <span>Estás viendo el aula como alumno de <strong id="teacher-preview-grade-label">7th Grade</strong>.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="switchTeacherPreviewGrade()" class="bg-indigo-800 hover:bg-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-indigo-600 transition-colors cursor-pointer">
+                        Cambiar Grado
+                    </button>
+                    <button onclick="exitTeacherStudentPreview()" class="bg-amber-500 hover:bg-amber-600 text-gray-950 text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-colors cursor-pointer">
+                        Volver a Modo Profesor
+                    </button>
+                </div>
+            </div>
+
+            <!-- Top Space Banner Header (Editable by Teacher for each space) -->
+            <div id="space-banner" class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-emerald-800 via-teal-700 to-indigo-900 text-white shadow-md p-6 sm:p-8 lg:px-10">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div class="space-y-2 max-w-3xl">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="banner-tag" class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-xs text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                📌 TABLÓN PRINCIPAL (MARYMOUNT)
+                            </span>
+                            <button id="btn-edit-banner" onclick="openBannerEditModal()" class="hidden inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-gray-950 text-xs font-bold px-3 py-1 rounded-full shadow-xs transition-colors cursor-pointer">
+                                <i class="fa-solid fa-pen text-[10px]"></i> Editar Tablón
+                            </button>
+                        </div>
+                        <h2 id="banner-title" class="font-google font-extrabold text-2xl sm:text-3xl lg:text-4xl tracking-tight">
+                            Refuerzo Académico de Geometría
+                        </h2>
+                        <p id="banner-subtitle" class="text-emerald-100 text-xs sm:text-sm leading-relaxed">
+                            Plataforma oficial de entrega, comentarios y Quizzes semanales en NotebookLM.
+                        </p>
+                    </div>
+
+                    <!-- Summary Counters -->
+                    <div id="banner-stats-box" class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-2xl px-5 py-3.5 flex items-center gap-6 shrink-0 self-start lg:self-center">
+                        <div class="text-center">
+                            <p id="stat-total-posts" class="font-google font-extrabold text-xl sm:text-2xl text-white">0</p>
+                            <p class="text-[11px] text-emerald-100">Actividades</p>
+                        </div>
+                        <div class="h-8 w-px bg-white/20"></div>
+                        <div class="text-center">
+                            <p id="stat-7th-posts" class="font-google font-extrabold text-xl sm:text-2xl text-emerald-300">0</p>
+                            <p class="text-[11px] text-emerald-100">7th Grade</p>
+                        </div>
+                        <div class="h-8 w-px bg-white/20"></div>
+                        <div class="text-center">
+                            <p id="stat-8th-posts" class="font-google font-extrabold text-xl sm:text-2xl text-sky-300">0</p>
+                            <p class="text-[11px] text-emerald-100">8th Grade</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= HOME TAB VIEW ================= -->
+            <div id="view-home" class="space-y-6">
+                <!-- Pinned & General Announcements -->
+                <div id="home-announcements-container" class="space-y-4"></div>
+
+                <!-- Feed Header & Search -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-gray-200 pb-3">
+                    <div>
+                        <h3 class="font-google font-bold text-xl text-gray-800 flex items-center gap-2">
+                            <span>📚</span> Todas las Actividades de Refuerzo
+                        </h3>
+                        <p class="text-xs text-gray-500">Entregas de archivos, enlaces, comentarios y Quizzes.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-xl border border-gray-200 text-xs font-semibold">
+                            <button id="home-filter-all" onclick="setHomeGradeFilter('all')" class="px-2.5 py-1 rounded-lg bg-white text-gray-900 shadow-2xs transition-all cursor-pointer">Todas</button>
+                            <button id="home-filter-7th" onclick="setHomeGradeFilter('7th')" class="px-2.5 py-1 rounded-lg text-gray-600 hover:text-gray-900 transition-all cursor-pointer">🟢 7th</button>
+                            <button id="home-filter-8th" onclick="setHomeGradeFilter('8th')" class="px-2.5 py-1 rounded-lg text-gray-600 hover:text-gray-900 transition-all cursor-pointer">🔵 8th</button>
+                        </div>
+                        <div class="relative w-full sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" id="search-input" onkeyup="renderAllViews()" placeholder="Buscar actividad..." class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Home Posts Grid -->
+                <div id="home-posts-container" class="space-y-6"></div>
+            </div>
+
+            <!-- ================= 7TH GRADE TAB VIEW ================= -->
+            <div id="view-7th" class="space-y-6 hidden">
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🟢</span>
+                        <div>
+                            <h3 class="font-google font-bold text-emerald-900 text-lg">Espacio Exclusivo: Séptimo Grado (7th Grade)</h3>
+                            <p class="text-xs text-emerald-700">Anuncios, actividades, guías y entregas asignadas a 7th Grade.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="student-progress-7th" class="hidden"></div>
+                        <select id="filter-7th-topic" onchange="renderAllViews()" class="bg-white border border-emerald-300 text-emerald-900 text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="all">Todos los Trimestres / Temas</option>
+                        </select>
+                        <button id="btn-ann-7th" onclick="openNewAnnouncementModal('7th')" class="hidden bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors cursor-pointer">
+                            + Anuncio 7th
+                        </button>
+                        <button id="btn-create-7th" onclick="openNewPostModal('7th')" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors cursor-pointer">
+                            + Actividad 7th
+                        </button>
+                    </div>
+                </div>
+
+                <div id="7th-announcements-container" class="space-y-4"></div>
+                <div id="7th-posts-container" class="space-y-6"></div>
+            </div>
+
+            <!-- ================= 8TH GRADE TAB VIEW ================= -->
+            <div id="view-8th" class="space-y-6 hidden">
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🔵</span>
+                        <div>
+                            <h3 class="font-google font-bold text-blue-900 text-lg">Espacio Exclusivo: Octavo Grado (8th Grade)</h3>
+                            <p class="text-xs text-blue-700">Anuncios, actividades, guías y entregas asignadas a 8th Grade.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="student-progress-8th" class="hidden"></div>
+                        <select id="filter-8th-topic" onchange="renderAllViews()" class="bg-white border border-blue-300 text-blue-900 text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">Todos los Trimestres / Temas</option>
+                        </select>
+                        <button id="btn-ann-8th" onclick="openNewAnnouncementModal('8th')" class="hidden bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors cursor-pointer">
+                            + Anuncio 8th
+                        </button>
+                        <button id="btn-create-8th" onclick="openNewPostModal('8th')" class="hidden bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors cursor-pointer">
+                            + Actividad 8th
+                        </button>
+                    </div>
+                </div>
+
+                <div id="8th-announcements-container" class="space-y-4"></div>
+                <div id="8th-posts-container" class="space-y-6"></div>
+            </div>
+
+            <!-- ================= HERRAMIENTAS DE GEOMETRÍA (TRIMESTERS & LEARNING INTENTIONS) ================= -->
+            <div id="view-tools" class="space-y-6 hidden">
+                <!-- Google Classroom Classwork-inspired Toolbar -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-2xs space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <!-- Teacher "+ Crear" Dropdown Button -->
+                        <div id="tools-create-dropdown-wrapper" class="relative hidden">
+                            <button onclick="toggleToolsCreateMenu()" class="bg-[#1a73e8] hover:bg-[#1557b0] text-white font-google font-semibold text-sm px-5 py-2.5 rounded-full shadow-sm inline-flex items-center gap-2 transition-colors cursor-pointer">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Crear</span>
+                            </button>
+                            <div id="tools-create-menu" class="hidden absolute left-0 mt-2 w-68 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-30">
+                                <button onclick="openNewLearningIntentionModal()" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-800 hover:bg-blue-50 flex items-center gap-3 cursor-pointer">
+                                    <span class="w-7 h-7 rounded-lg bg-blue-100 text-[#1a73e8] flex items-center justify-center"><i class="fa-solid fa-layer-group"></i></span>
+                                    <div>
+                                        <p class="font-bold">Trimestre / Learning Intention</p>
+                                        <p class="text-[11px] text-gray-500 font-normal">Crear tema o sección por trimestre</p>
+                                    </div>
+                                </button>
+                                <button onclick="openNewGeometryToolModal()" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-800 hover:bg-emerald-50 flex items-center gap-3 cursor-pointer">
+                                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center"><i class="fa-solid fa-link"></i></span>
+                                    <div>
+                                        <p class="font-bold">Enlace / Plataforma de Geometría</p>
+                                        <p class="text-[11px] text-gray-500 font-normal">Agregar GeoGebra, Desmos, Mathigon...</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Grade Filter Pills for Tools -->
+                        <div class="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl border border-gray-200 text-xs font-semibold">
+                            <button id="tools-grade-all" onclick="setToolsGradeFilter('all')" class="px-3 py-1.5 rounded-lg bg-white text-gray-900 shadow-2xs transition-all cursor-pointer">Todos los grados</button>
+                            <button id="tools-grade-7th" onclick="setToolsGradeFilter('7th')" class="px-3 py-1.5 rounded-lg text-gray-600 hover:text-gray-900 transition-all cursor-pointer">🟢 7th Grade</button>
+                            <button id="tools-grade-8th" onclick="setToolsGradeFilter('8th')" class="px-3 py-1.5 rounded-lg text-gray-600 hover:text-gray-900 transition-all cursor-pointer">🔵 8th Grade</button>
+                        </div>
+                    </div>
+
+                    <!-- Topic Filter Box & Collapse All Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 pt-1">
+                        <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                            <div class="relative w-full sm:w-72">
+                                <label class="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
+                                    Topic filter (Trimestre / Learning Intention)
+                                </label>
+                                <select id="tools-topic-filter" onchange="renderGeometryToolsView()" class="w-full border border-gray-300 hover:border-gray-400 focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-500/20 rounded-lg px-3.5 py-2.5 text-sm text-gray-800 bg-white focus:outline-none transition-colors">
+                                    <option value="all">All topics (Todos los trimestres)</option>
+                                </select>
+                            </div>
+                            <div class="relative w-full sm:w-56">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                <input type="text" id="tools-search-input" onkeyup="renderGeometryToolsView()" placeholder="Buscar plataforma..." class="w-full pl-9 pr-3 py-2.5 text-xs rounded-lg border border-gray-300 focus:outline-none focus:border-[#1a73e8] bg-white">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-medium text-[#1a73e8]">
+                            <select id="tools-trimester-filter" onchange="renderGeometryToolsView()" class="border border-blue-200 bg-blue-50/50 text-[#1a73e8] font-semibold rounded-lg px-3 py-1.5 text-xs focus:outline-none">
+                                <option value="all">Todos los Trimestres</option>
+                                <option value="Trimester 1">Trimester 1</option>
+                                <option value="Trimester 2">Trimester 2</option>
+                                <option value="Trimester 3">Trimester 3</option>
+                            </select>
+
+                            <button onclick="shareGeometryToolsContent()" class="inline-flex items-center gap-1.5 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors font-google font-medium cursor-pointer">
+                                <i class="fa-solid fa-share-nodes text-xs"></i>
+                                <span>Compartir recursos</span>
+                            </button>
+
+                            <button id="btn-toggle-collapse-all" onclick="toggleCollapseAllTopics()" class="inline-flex items-center gap-2 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors font-google font-medium cursor-pointer">
+                                <i id="collapse-all-icon" class="fa-solid fa-down-left-and-up-right-to-center text-xs"></i>
+                                <span id="collapse-all-text">Collapse all</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Container for Trimesters & Learning Intentions -->
+                <div id="tools-topics-container" class="space-y-4"></div>
+            </div>
+
+            <!-- ================= TEACHER REVIEW & FILTER PANEL ================= -->
+            <div id="view-teacher-panel" class="space-y-6 hidden">
+                <!-- Sub-navigation for Teacher Panel -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="subtab-submissions" onclick="switchTeacherSubTab('submissions')" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 text-white shadow-2xs transition-all cursor-pointer">
+                            📥 Entregas y Comentarios
+                        </button>
+                        <button id="subtab-directory" onclick="switchTeacherSubTab('directory')" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
+                            📋 Directorio y Faltantes por Entregar
+                        </button>
+                    </div>
+                    <button onclick="exportFilteredGradesToCSV()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs transition-colors cursor-pointer">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Descargar Planilla Excel (.CSV)</span>
+                    </button>
+                </div>
+
+                <!-- Subview 1: Filtered Submissions & Comments -->
+                <div id="teacher-submissions-subview" class="space-y-5">
+                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-2xs space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-google font-bold text-base text-gray-900">Filtrar Actividad de Estudiantes</h3>
+                            <span id="teacher-filtered-results-count" class="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full">0 resultados</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+                            <select id="filter-panel-grade" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Grado: Todos</option>
+                                <option value="7th">🟢 7th Grade</option>
+                                <option value="8th">🔵 8th Grade</option>
+                            </select>
+                            <select id="filter-panel-house" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Salón: Todos</option>
+                                <option value="Yellow">🟡 Yellow</option>
+                                <option value="Blue">🔵 Blue</option>
+                                <option value="Red">🔴 Red</option>
+                                <option value="Green">🟢 Green</option>
+                            </select>
+                            <select id="filter-panel-task" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Actividad: Todas</option>
+                            </select>
+                            <select id="filter-panel-type" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Tipo: Entregas y Comentarios</option>
+                                <option value="submissions">Solo Entregas (Archivos/Links)</option>
+                                <option value="comments">Solo Comentarios</option>
+                            </select>
+                            <select id="filter-panel-status" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Estado: Todos</option>
+                                <option value="pending">⏳ Pendientes de revisión</option>
+                                <option value="reviewed">✅ Ya respondidos/calificados</option>
+                            </select>
+                            <input type="text" id="filter-panel-search" onkeyup="refreshTeacherPanelViews()" placeholder="Buscar alumno o correo..." class="border border-gray-300 rounded-xl px-3 py-2 text-xs bg-white">
+                        </div>
+                    </div>
+
+                    <div id="teacher-filtered-feed-container" class="space-y-4"></div>
+                </div>
+
+                <!-- Subview 2: Student Directory & Missing Work -->
+                <div id="teacher-directory-subview" class="hidden space-y-5">
+                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-2xs space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <h3 class="font-google font-bold text-base text-gray-900">Control de Entregas y Directorio de Alumnos</h3>
+                            <div id="dir-summary-stats" class="text-xs font-semibold text-gray-600"></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <select id="dir-filter-grade" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Grado: Todos</option>
+                                <option value="7th">🟢 7th Grade</option>
+                                <option value="8th">🔵 8th Grade</option>
+                            </select>
+                            <select id="dir-filter-house" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Salón: Todos</option>
+                                <option value="Yellow">🟡 Yellow</option>
+                                <option value="Blue">🔵 Blue</option>
+                                <option value="Red">🔴 Red</option>
+                                <option value="Green">🟢 Green</option>
+                            </select>
+                            <select id="dir-filter-task" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Actividad: Seleccionar...</option>
+                            </select>
+                            <select id="dir-filter-status" onchange="refreshTeacherPanelViews()" class="border border-gray-300 rounded-xl px-3 py-2 text-xs font-semibold bg-white">
+                                <option value="all">Mostrar: Todos</option>
+                                <option value="missing">❌ Faltantes por entregar</option>
+                                <option value="submitted">✅ Ya entregaron</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="teacher-directory-container" class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-2xs"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. Teacher PIN Unlock Modal -->
+    <div id="teacher-unlock-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-google font-bold text-lg text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-amber-500"></i> Acceso Docente
+                </h3>
+                <button onclick="closeTeacherUnlockModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="teacher-pin-form" onsubmit="handleTeacherUnlockSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">PIN de Seguridad</label>
+                    <input type="password" id="teacher-pin-input" required placeholder="Ingresa el PIN" autocomplete="off"
+                        class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t">
+                    <button type="button" onclick="enterTeacherStudentPreview()" class="text-xs font-semibold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer">
+                        👁️ Vista Previa Alumno
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeTeacherUnlockModal()" class="px-3.5 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-xs cursor-pointer">Verificar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Edit Board / Banner Modal -->
+    <div id="banner-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-google font-bold text-lg text-gray-900">✏️ Personalizar Encabezado del Tablón</h3>
+                <button onclick="closeBannerEditModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="banner-edit-form" onsubmit="saveBannerEdit(event)" class="space-y-4">
+                <input type="hidden" id="edit-banner-space-key">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 mb-1">Nombre Barra Superior</label>
+                        <input type="text" id="edit-brand-title" class="w-full border border-gray-300 rounded-lg p-2 text-xs bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 mb-1">Subtítulo Barra Superior</label>
+                        <input type="text" id="edit-brand-subtitle" class="w-full border border-gray-300 rounded-lg p-2 text-xs bg-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Etiqueta Superior del Tablón Actual</label>
+                    <input type="text" id="edit-banner-tag" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Título Principal del Tablón Actual</label>
+                    <input type="text" id="edit-banner-title" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Descripción / Subtítulo del Tablón Actual</label>
+                    <textarea id="edit-banner-subtitle" rows="2" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="closeBannerEditModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl cursor-pointer">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Create / Edit Activity (Post) Modal -->
+    <div id="post-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-gray-100 my-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="post-modal-title" class="font-google font-bold text-lg text-gray-900">Nueva Actividad</h3>
+                <button onclick="closePostModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="post-form" onsubmit="savePost(event)" class="space-y-3.5">
+                <input type="hidden" id="edit-post-id">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Título de la Actividad (Opcional)</label>
+                        <input type="text" id="post-title" placeholder="Ej: Quiz Semana 4 - Teorema de Pitágoras" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Semana / Etiqueta</label>
+                        <input type="text" id="post-week" placeholder="Ej: Semana 4" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Grado Destino</label>
+                        <select id="post-grade" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="7th">🟢 7th Grade</option>
+                            <option value="8th">🔵 8th Grade</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Trimestre / Learning Intention</label>
+                        <select id="post-topic-id" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="">Sin tema específico</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Fecha Límite (Opcional)</label>
+                        <input type="text" id="post-due-date" placeholder="Ej: Viernes 20 Nov • 11:59 PM" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Puntos Extra / Valor (Opcional)</label>
+                        <input type="text" id="post-extra-points" placeholder="Ej: +5 pts Quiz" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Enlace del Quiz / Recurso NotebookLM (Opcional)</label>
+                    <input type="text" id="post-url" placeholder="https://notebooklm.google.com/... (o dejar en blanco)" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-emerald-700">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Enlace Interactivo GeoGebra / Video de Apoyo (Opcional)</label>
+                    <input type="text" id="post-geogebra-url" placeholder="https://www.geogebra.org/... o https://youtube.com/... (o vacío)" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono text-indigo-700">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Instrucciones (Opcional)</label>
+                    <textarea id="post-instructions" rows="3" placeholder="Explica qué deben hacer los estudiantes o adjuntar..." class="w-full border border-gray-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="closePostModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs cursor-pointer">Publicar Actividad</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Create / Edit Announcement Modal -->
+    <div id="announcement-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="ann-modal-title" class="font-google font-bold text-lg text-gray-900">Nuevo Anuncio</h3>
+                <button onclick="closeAnnouncementModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="announcement-form" onsubmit="saveAnnouncement(event)" class="space-y-4">
+                <input type="hidden" id="edit-ann-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Título del Anuncio</label>
+                    <input type="text" id="ann-title" required placeholder="Ej: Recordatorio Evaluación Trimestral" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Dirigido a</label>
+                        <select id="ann-audience" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                            <option value="all">🌐 Ambos Grados (General)</option>
+                            <option value="7th">🟢 Solo 7th Grade</option>
+                            <option value="8th">🔵 Solo 8th Grade</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center pt-5">
+                        <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700">
+                            <input type="checkbox" id="ann-pinned" class="rounded text-amber-600 focus:ring-amber-500">
+                            <span>📌 Fijar anuncio en la parte superior</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Mensaje del Anuncio</label>
+                    <textarea id="ann-body" rows="4" required placeholder="Escribe aquí el comunicado para tus estudiantes..." class="w-full border border-gray-300 rounded-xl p-2.5 text-xs"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="closeAnnouncementModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white rounded-xl cursor-pointer">Guardar Anuncio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. Create / Edit Learning Intention (Trimester Topic) Modal -->
+    <div id="learning-intention-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="li-modal-title" class="font-google font-bold text-lg text-gray-900">Trimestre / Learning Intention</h3>
+                <button onclick="closeLearningIntentionModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="learning-intention-form" onsubmit="saveLearningIntention(event)" class="space-y-4">
+                <input type="hidden" id="edit-li-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Trimestre</label>
+                        <select id="li-trimester" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                            <option value="Trimester 1">Trimester 1</option>
+                            <option value="Trimester 2">Trimester 2</option>
+                            <option value="Trimester 3">Trimester 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Número / Etiqueta Learning Intention</label>
+                        <input type="text" id="li-number" required placeholder="Ej: Learning Intention 1" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre del Tema (Opcional)</label>
+                        <input type="text" id="li-title" placeholder="Ej: Ángulos, Polígonos y Congruencia" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Grado</label>
+                        <select id="li-grade" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                            <option value="all">🌐 Ambos (7th & 8th)</option>
+                            <option value="7th">🟢 Solo 7th</option>
+                            <option value="8th">🔵 Solo 8th</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Descripción / Meta de Aprendizaje (Opcional)</label>
+                    <textarea id="li-description" rows="2" placeholder="Describe brevemente los objetivos de este Learning Intention..." class="w-full border border-gray-300 rounded-xl p-2.5 text-xs"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="closeLearningIntentionModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-xl cursor-pointer">Guardar Tema</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. Create / Edit Geometry Tool / Platform Link Modal -->
+    <div id="geometry-tool-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="tool-modal-title" class="font-google font-bold text-lg text-gray-900">Agregar Plataforma / Herramienta</h3>
+                <button onclick="closeGeometryToolModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="geometry-tool-form" onsubmit="saveGeometryTool(event)" class="space-y-4">
+                <input type="hidden" id="edit-tool-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre de la Plataforma o Recurso</label>
+                    <input type="text" id="tool-title" required placeholder="Ej: GeoGebra Geometry - Construcción de Triángulos" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Enlace (URL de redirección a la plataforma)</label>
+                    <input type="text" id="tool-url" required placeholder="https://www.geogebra.org/geometry" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs font-mono text-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Trimestre / Learning Intention</label>
+                        <select id="tool-topic-id" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Grado</label>
+                        <select id="tool-grade" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                            <option value="all">🌐 Ambos</option>
+                            <option value="7th">🟢 7th Grade</option>
+                            <option value="8th">🔵 8th Grade</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Categoría</label>
+                    <select id="tool-category" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                        <option value="Simulador Interactivo">📐 Simulador Interactivo (GeoGebra / Desmos)</option>
+                        <option value="Práctica / Quiz">🎯 Práctica / Quiz (IXL / Khan / Quizizz)</option>
+                        <option value="Manipulativos Virtuales">🧩 Manipulativos Virtuales (Mathigon Polypad)</option>
+                        <option value="Guía / Video Explicativo">📺 Guía / Video Explicativo</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Descripción breve (Opcional)</label>
+                    <textarea id="tool-description" rows="2" placeholder="Indica cómo usar esta plataforma en clase o en casa..." class="w-full border border-gray-300 rounded-xl p-2.5 text-xs"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="closeGeometryToolModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl cursor-pointer">Guardar Enlace</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 7. Edit Student Info Modal (Teacher) -->
+    <div id="student-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-google font-bold text-lg text-gray-900">Editar Datos del Estudiante</h3>
+                <button onclick="closeStudentEditModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="student-edit-form" onsubmit="saveStudentEdit(event)" class="space-y-4">
+                <input type="hidden" id="edit-student-email">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre y Apellido</label>
+                    <input type="text" id="edit-student-name" required class="w-full border border-gray-300 rounded-xl p-2.5 text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Grado</label>
+                        <select id="edit-student-grade" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                            <option value="7th">7th Grade</option>
+                            <option value="8th">8th Grade</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Salón / Casa</label>
+                        <select id="edit-student-house" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs bg-white">
+                            <option value="Yellow">Yellow</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="closeStudentEditModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl cursor-pointer">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. Quick File / Image / PDF Preview Modal -->
+    <div id="preview-modal" class="hidden fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-200">
+            <div class="px-5 py-3.5 bg-gray-50 border-b border-gray-200 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <h3 id="preview-modal-title" class="font-google font-bold text-sm text-gray-900 truncate">Vista Rápida</h3>
+                    <p id="preview-modal-subtitle" class="text-[11px] text-gray-500 truncate"></p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <a id="preview-modal-download" href="#" download class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Descargar
+                    </a>
+                    <button onclick="closePreviewModal()" class="p-2 text-gray-500 hover:text-gray-800 rounded-xl hover:bg-gray-200 cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="preview-modal-body" class="p-4 overflow-auto flex-1 flex items-center justify-center bg-slate-100 min-h-[300px]"></div>
+        </div>
+    </div>
+
+    <!-- 9. Confirm Delete Activity Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-gray-100 text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <div>
+                <h3 class="font-google font-bold text-lg text-gray-900">¿Eliminar esta actividad?</h3>
+                <p class="text-xs text-gray-500 mt-1">Se eliminará la publicación del tablón. Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="flex justify-center gap-3 pt-2">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                <button onclick="confirmDeletePost()" class="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl cursor-pointer">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Confirm Delete Announcement Modal -->
+    <div id="delete-announcement-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-gray-100 text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div>
+                <h3 class="font-google font-bold text-lg text-gray-900">¿Eliminar este anuncio?</h3>
+                <p class="text-xs text-gray-500 mt-1">El anuncio desaparecerá para todos los estudiantes.</p>
+            </div>
+            <div class="flex justify-center gap-3 pt-2">
+                <button onclick="closeDeleteAnnouncementModal()" class="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer">Cancelar</button>
+                <button onclick="confirmDeleteAnnouncement()" class="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl cursor-pointer">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right-Click Context Menu for Teacher Mode -->
+    <div id="context-menu" class="hidden fixed z-50 bg-white rounded-xl shadow-xl border border-gray-200 py-1.5 w-44 text-xs font-semibold">
+        <button onclick="contextEditPost()" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-pen text-emerald-600"></i> Editar Actividad
+        </button>
+        <button onclick="contextDeletePost()" class="w-full text-left px-3.5 py-2 hover:bg-rose-50 text-rose-600 flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-trash"></i> Eliminar Actividad
+        </button>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+    <!-- ================= APPLICATION LOGIC ================= -->
+    <script>
+        const TEACHER_PIN = '@@1290';
+
+        // Default Initial Seed Data
+        const defaultLearningIntentions = [
+            {
+                id: 'li-t1-1',
+                trimester: 'Trimester 1',
+                number: 'Learning Intention 1',
+                title: 'Ángulos, Rectas Paralelas y Transversales',
+                grade: 'all',
+                description: 'Identificar y calcular medidas de ángulos formados por rectas paralelas cortadas por una secante.',
+                order: 1
+            },
+            {
+                id: 'li-t1-2',
+                trimester: 'Trimester 1',
+                number: 'Learning Intention 2',
+                title: 'Propiedades de Triángulos y Teorema de Pitágoras',
+                grade: 'all',
+                description: 'Aplicar la suma de ángulos interiores y el Teorema de Pitágoras en triángulos rectángulos.',
+                order: 2
+            },
+            {
+                id: 'li-t2-1',
+                trimester: 'Trimester 2',
+                number: 'Learning Intention 1',
+                title: 'Congruencia, Semejanza y Transformaciones',
+                grade: 'all',
+                description: 'Explorar traslaciones, rotaciones, reflexiones y criterios de congruencia/semejanza.',
+                order: 3
+            }
+        ];
+
+        const defaultGeometryTools = [
+            {
+                id: 'tool-1',
+                title: 'GeoGebra Geometry - Construcción Interactiva',
+                url: 'https://www.geogebra.org/geometry',
+                topicId: 'li-t1-1',
+                grade: 'all',
+                category: 'Simulador Interactivo',
+                description: 'Herramienta principal para trazar rectas paralelas, perpendiculares, bisectrices y medir ángulos.'
+            },
+            {
+                id: 'tool-2',
+                title: 'Mathigon Polypad - Manipulativos Geométricos',
+                url: 'https://mathigon.org/polypad',
+                topicId: 'li-t1-2',
+                grade: '7th',
+                category: 'Manipulativos Virtuales',
+                description: 'Polígonos dinámicos, tangram y demostraciones visuales del Teorema de Pitágoras.'
+            },
+            {
+                id: 'tool-3',
+                title: 'Desmos Geometry Tool',
+                url: 'https://www.desmos.com/geometry',
+                topicId: 'li-t2-1',
+                grade: '8th',
+                category: 'Simulador Interactivo',
+                description: 'Plano interactivo para transformaciones rígidas, vectores y simetrías.'
+            }
+        ];
+
+        const defaultAnnouncements = [
+            {
+                id: 'ann-welcome',
+                title: '📢 Bienvenidos al Espacio de Refuerzo de Geometría',
+                audience: 'all',
+                pinned: true,
+                body: 'Aquí encontrarás los enlaces semanales de NotebookLM, actividades de práctica y plataformas de Geometría. Recuerda subir tus evidencias o enlaces antes de la fecha límite.',
+                author: 'Profesor de Geometría',
+                timestamp: 'Anuncio Oficial',
+                createdAt: 1700000000000
+            }
+        ];
+
+        const defaultTasks = [
+            {
+                id: 'task-seed-1',
+                title: 'Quiz Diagnóstico: Ángulos y Rectas Paralelas',
+                week: 'Semana 1',
+                topicId: 'li-t1-1',
+                grade: '7th',
+                extraPoints: '+5 pts Quiz',
+                dueDate: 'Viernes • 11:59 PM',
+                url: 'https://notebooklm.google.com/',
+                geogebraUrl: 'https://www.geogebra.org/geometry',
+                instructions: 'Completa el cuestionario interactivo en NotebookLM y adjunta una captura de tu resultado final o el enlace de tu trabajo.',
+                createdAt: 1700000100000
+            },
+            {
+                id: 'task-seed-2',
+                title: 'Taller de Semejanza y Teorema de Pitágoras',
+                week: 'Semana 1',
+                topicId: 'li-t1-2',
+                grade: '8th',
+                extraPoints: '+5 pts Quiz',
+                dueDate: 'Viernes • 11:59 PM',
+                url: 'https://notebooklm.google.com/',
+                geogebraUrl: 'https://www.desmos.com/geometry',
+                instructions: 'Resuelve los problemas propuestos, verifica tus construcciones en Desmos y sube tu evidencia en PDF, imagen o enlace.',
+                createdAt: 1700000200000
+            }
+        ];
+
+        const defaultBannerConfigs = {
+            brandTitle: 'Refuerzo de Geometría',
+            brandSubtitle: 'Aula Virtual • 7th & 8th Grade',
+            home: {
+                tag: '📌 TABLÓN PRINCIPAL (MARYMOUNT)',
+                title: 'Refuerzo Académico de Geometría',
+                subtitle: 'Plataforma oficial de entrega, comentarios y Quizzes semanales en NotebookLM.'
+            },
+            '7th': {
+                tag: '🟢 SÉPTIMO GRADO • 7TH GRADE',
+                title: 'Geometría 7th Grade',
+                subtitle: 'Actividades de refuerzo, guías visuales y seguimiento de entregas para Séptimo Grado.'
+            },
+            '8th': {
+                tag: '🔵 OCTAVO GRADO • 8TH GRADE',
+                title: 'Geometría 8th Grade',
+                subtitle: 'Actividades de refuerzo, demostraciones y Quizzes semanales para Octavo Grado.'
+            },
+            tools: {
+                tag: '📐 RECURSOS Y PLATAFORMAS INTERACTIVAS',
+                title: 'Herramientas de Geometría',
+                subtitle: 'Explora plataformas externas y recursos organizados por Trimestre y Learning Intention.'
+            },
+            'teacher-panel': {
+                tag: '👨‍🏫 PANEL DE GESTIÓN DOCENTE',
+                title: 'Revisión y Seguimiento Académico',
+                subtitle: 'Filtra entregas por grado y salón, asigna notas, responde dudas y descarga planillas en Excel.'
+            }
+        };
+
+        // State Variables
+        let currentUser = JSON.parse(localStorage.getItem('marymount_current_user') || 'null');
+        let userRole = localStorage.getItem('marymount_user_role') || 'student';
+        let tasks = JSON.parse(localStorage.getItem('marymount_tasks') || 'null') || [...defaultTasks];
+        let announcements = JSON.parse(localStorage.getItem('marymount_announcements') || 'null') || [...defaultAnnouncements];
+        let submissions = JSON.parse(localStorage.getItem('marymount_submissions') || '[]');
+        let comments = JSON.parse(localStorage.getItem('marymount_comments') || '[]');
+        let registeredStudents = JSON.parse(localStorage.getItem('marymount_students') || '[]');
+        let learningIntentions = JSON.parse(localStorage.getItem('marymount_learning_intentions') || 'null') || [...defaultLearningIntentions];
+        let geometryTools = JSON.parse(localStorage.getItem('marymount_geometry_tools') || 'null') || [...defaultGeometryTools];
+        let bannerConfigs = JSON.parse(localStorage.getItem('marymount_banner_configs') || 'null') || JSON.parse(JSON.stringify(defaultBannerConfigs));
+
+        let currentTab = 'home';
+        let homeGradeFilter = 'all';
+        let teacherSubTab = 'submissions';
+        let toolsGradeFilter = 'all';
+        let teacherPreviewMode = false;
+        let teacherPreviewGrade = '7th';
+        const collapsedTopicIds = new Set();
+        const openSectionIds = new Set();
+        let targetPostIdToDelete = null;
+        let targetAnnouncementIdToDelete = null;
+        let selectedPostIdForContext = null;
+
+        // Persistence Helpers
+        function saveTasksToStorage() { try { localStorage.setItem('marymount_tasks', JSON.stringify(tasks)); } catch (e) { console.warn(e); } }
+        function saveAnnouncementsToStorage() { try { localStorage.setItem('marymount_announcements', JSON.stringify(announcements)); } catch (e) { console.warn(e); } }
+        function saveSubmissionsToStorage() {
+            try {
+                localStorage.setItem('marymount_submissions', JSON.stringify(submissions));
+            } catch (e) {
+                console.warn('Almacenamiento local lleno:', e);
+            }
+        }
+        function saveCommentsToStorage() { try { localStorage.setItem('marymount_comments', JSON.stringify(comments)); } catch (e) { console.warn(e); } }
+        function saveStudentsToStorage() { try { localStorage.setItem('marymount_students', JSON.stringify(registeredStudents)); } catch (e) { console.warn(e); } }
+        function saveLearningIntentionsToStorage() { try { localStorage.setItem('marymount_learning_intentions', JSON.stringify(learningIntentions)); } catch (e) { console.warn(e); } }
+        function saveGeometryToolsToStorage() { try { localStorage.setItem('marymount_geometry_tools', JSON.stringify(geometryTools)); } catch (e) { console.warn(e); } }
+        function saveBannerConfigsToStorage() { try { localStorage.setItem('marymount_banner_configs', JSON.stringify(bannerConfigs)); } catch (e) { console.warn(e); } }
+
+        // Cloud Sync Bridge (connected by Firebase module below when available)
+        window.getInitialSeedData = function () {
+            return { defaultTasks, defaultAnnouncements, defaultLearningIntentions, defaultGeometryTools };
+        };
+
+        function syncDocUpsert(collectionName, docId, dataObj) {
+            if (typeof window.__cloudUpsert === 'function') {
+                return window.__cloudUpsert(collectionName, docId, dataObj);
+            }
+            return Promise.resolve(true);
+        }
+
+        function syncDocDelete(collectionName, docId) {
+// ... existing code ... -->
+            openSectionIds.add(`comments-sec-${containerId}-${postId}`);
+            renderAllViews();
+            showToast('Comentario publicado ✓', 'success');
+        }
+
+        function saveTeacherCommentReply(commentId, inputElId) {
+            if (userRole !== 'teacher') return;
+            const input = document.getElementById(inputElId);
+            if (!input) return;
+            const text = input.value.trim();
+            const cmt = comments.find(c => c.id === commentId);
+            if (!cmt) return;
+
+            const nowStr = new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            cmt.teacherReply = text ? { text, timestamp: nowStr, createdAt: Date.now() } : null;
+            saveCommentsToStorage();
+            syncDocUpsert('comments', cmt.id, cmt);
+            renderAllViews();
+            showToast(text ? 'Respuesta publicada ✓' : 'Respuesta eliminada', 'success');
+        }
+
+        function saveSubmissionReview(subId, gradeInputId, fbInputId) {
+            if (userRole !== 'teacher') return;
+            const sub = submissions.find(s => s.id === subId);
+            if (!sub) return;
+
+            const gradeVal = (document.getElementById(gradeInputId)?.value || '').trim();
+            const fbVal = (document.getElementById(fbInputId)?.value || '').trim();
+            const nowStr = new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+            sub.gradeScore = gradeVal;
+            sub.teacherFeedback = fbVal ? { text: fbVal, timestamp: nowStr, createdAt: Date.now() } : null;
+
+            saveSubmissionsToStorage();
+            syncDocUpsert('submissions', sub.id, sub);
+            renderAllViews();
+            showToast('Calificación y retroalimentación guardadas ✓', 'success');
+        }
+
+        // ================= ACTIVITIES (POSTS) CRUD & CONTEXT MENU =================
+        function openNewPostModal(defaultGrade = '7th') {
+            if (userRole !== 'teacher') return;
+            populateAllTopicSelectors();
+            document.getElementById('post-modal-title').innerText = 'Nueva Actividad';
+            document.getElementById('edit-post-id').value = '';
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-week').value = '';
+            document.getElementById('post-grade').value = defaultGrade === '8th' ? '8th' : '7th';
+            document.getElementById('post-topic-id').value = '';
+            document.getElementById('post-due-date').value = '';
+            document.getElementById('post-extra-points').value = '';
+            document.getElementById('post-url').value = '';
+            document.getElementById('post-geogebra-url').value = '';
+            document.getElementById('post-instructions').value = '';
+            document.getElementById('post-modal').classList.remove('hidden');
+        }
+
+        function openEditPostModal(postId) {
+            if (userRole !== 'teacher') return;
+            const post = tasks.find(t => t.id === postId);
+            if (!post) return;
+            populateAllTopicSelectors();
+            document.getElementById('post-modal-title').innerText = 'Editar Actividad';
+            document.getElementById('edit-post-id').value = post.id;
+            document.getElementById('post-title').value = post.title || '';
+            document.getElementById('post-week').value = post.week || '';
+            document.getElementById('post-grade').value = post.grade || '7th';
+            document.getElementById('post-topic-id').value = post.topicId || '';
+            document.getElementById('post-due-date').value = post.dueDate || '';
+            document.getElementById('post-extra-points').value = post.extraPoints || '';
+            document.getElementById('post-url').value = post.url || '';
+            document.getElementById('post-geogebra-url').value = post.geogebraUrl || '';
+            document.getElementById('post-instructions').value = post.instructions || '';
+            document.getElementById('post-modal').classList.remove('hidden');
+        }
+
+        function closePostModal() {
+            document.getElementById('post-modal').classList.add('hidden');
+        }
+
+        function savePost(e) {
+            e.preventDefault();
+            if (userRole !== 'teacher') return;
+            const editId = document.getElementById('edit-post-id').value;
+            const title = document.getElementById('post-title').value.trim();
+            const week = document.getElementById('post-week').value.trim();
+            const grade = document.getElementById('post-grade').value;
+            const topicId = document.getElementById('post-topic-id').value;
+            const dueDate = document.getElementById('post-due-date').value.trim();
+            const extraPoints = document.getElementById('post-extra-points').value.trim();
+            const url = normalizeUrl(document.getElementById('post-url').value);
+            const geogebraUrl = normalizeUrl(document.getElementById('post-geogebra-url').value);
+            const instructions = document.getElementById('post-instructions').value.trim();
+
+            if (editId) {
+                const idx = tasks.findIndex(t => t.id === editId);
+                if (idx !== -1) {
+                    tasks[idx] = {
+                        ...tasks[idx],
+                        title,
+                        week,
+                        grade,
+                        topicId,
+                        dueDate,
+                        extraPoints,
+                        url,
+                        geogebraUrl,
+                        instructions
+                    };
+                    syncDocUpsert('tasks', editId, tasks[idx]);
+                }
+                showToast('Actividad actualizada ✓', 'success');
+            } else {
+                const newId = 'task-' + Date.now();
+                const newTask = {
+                    id: newId,
+                    title,
+                    week,
+                    grade,
+                    topicId,
+                    dueDate,
+                    extraPoints,
+                    url,
+                    geogebraUrl,
+                    instructions,
+                    createdAt: Date.now()
+                };
+                tasks.unshift(newTask);
+                syncDocUpsert('tasks', newId, newTask);
+                showToast('Actividad publicada ✓', 'success');
+            }
+
+            saveTasksToStorage();
+            closePostModal();
+            renderAllViews();
+        }
+
+        function openDeleteModal(postId) {
+            if (userRole !== 'teacher') return;
+            targetPostIdToDelete = postId;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            targetPostIdToDelete = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        function confirmDeletePost() {
+            if (targetPostIdToDelete && userRole === 'teacher') {
+                const delId = targetPostIdToDelete;
+                tasks = tasks.filter(t => t.id !== delId);
+                saveTasksToStorage();
+                syncDocDelete('tasks', delId);
+                renderAllViews();
+                showToast('Actividad eliminada', 'info');
+            }
+            closeDeleteModal();
+        }
+
+        function handlePostContextMenu(e, postId) {
+            if (userRole !== 'teacher') return;
+            e.preventDefault();
+            selectedPostIdForContext = postId;
+            const menu = document.getElementById('context-menu');
+            if (!menu) return;
+            menu.style.left = Math.min(e.clientX, window.innerWidth - 190) + 'px';
+            menu.style.top = Math.min(e.clientY, window.innerHeight - 100) + 'px';
+            menu.classList.remove('hidden');
+        }
+
+        function contextEditPost() {
+            document.getElementById('context-menu')?.classList.add('hidden');
+            if (selectedPostIdForContext) openEditPostModal(selectedPostIdForContext);
+        }
+
+        function contextDeletePost() {
+            document.getElementById('context-menu')?.classList.add('hidden');
+            if (selectedPostIdForContext) openDeleteModal(selectedPostIdForContext);
+        }
+
+        // ================= TEACHER REVIEW & FILTER PANEL =================
+        function switchTeacherSubTab(subTab) {
+            teacherSubTab = subTab;
+            const subView = document.getElementById('teacher-submissions-subview');
+            const dirView = document.getElementById('teacher-directory-subview');
+            const btnSub = document.getElementById('subtab-submissions');
+            const btnDir = document.getElementById('subtab-directory');
+
+            if (subTab === 'directory') {
+                subView?.classList.add('hidden');
+                dirView?.classList.remove('hidden');
+                if (btnDir) btnDir.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 text-white shadow-2xs transition-all cursor-pointer';
+                if (btnSub) btnSub.className = 'px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-all cursor-pointer';
+            } else {
+                dirView?.classList.add('hidden');
+                subView?.classList.remove('hidden');
+                if (btnSub) btnSub.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 text-white shadow-2xs transition-all cursor-pointer';
+                if (btnDir) btnDir.className = 'px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-all cursor-pointer';
+            }
+            refreshTeacherPanelViews();
+        }
+
+        function openTeacherFilteredForTask(taskId) {
+            switchTab('teacher-panel');
+            switchTeacherSubTab('submissions');
+            const sel = document.getElementById('filter-panel-task');
+            if (sel) sel.value = taskId;
+            refreshTeacherPanelViews();
+        }
+
+        function populateTeacherPanelTaskFilter() {
+            const sortedTasks = [...tasks].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            const optionsHtml = sortedTasks
+                .map(t => `<option value="${t.id}">[${t.grade}] ${escapeHtml(t.title || 'Actividad')}</option>`)
+                .join('');
+
+            const panelSel = document.getElementById('filter-panel-task');
+            if (panelSel) {
+                const prev = panelSel.value;
+                panelSel.innerHTML = `<option value="all">Actividad: Todas</option>` + optionsHtml;
+                if ([...panelSel.options].some(o => o.value === prev)) panelSel.value = prev;
+            }
+
+            const dirSel = document.getElementById('dir-filter-task');
+            if (dirSel) {
+                const prev = dirSel.value;
+                dirSel.innerHTML = `<option value="all">Actividad: Todas las actividades</option>` + optionsHtml;
+                if ([...dirSel.options].some(o => o.value === prev)) dirSel.value = prev;
+            }
+        }
+
+        function refreshTeacherPanelViews() {
+            if (userRole !== 'teacher') return;
+
+            const taskMap = {};
+            tasks.forEach(t => { taskMap[t.id] = t; });
+
+            // 1. Render Submissions & Comments Filtered Feed
+            const fGrade = document.getElementById('filter-panel-grade')?.value || 'all';
+            const fHouse = document.getElementById('filter-panel-house')?.value || 'all';
+            const fTask = document.getElementById('filter-panel-task')?.value || 'all';
+            const fType = document.getElementById('filter-panel-type')?.value || 'all';
+            const fStatus = document.getElementById('filter-panel-status')?.value || 'all';
+            const fSearch = (document.getElementById('filter-panel-search')?.value || '').toLowerCase().trim();
+
+            const feedItems = [];
+
+            if (fType === 'all' || fType === 'submissions') {
+                submissions.forEach(sub => {
+                    if (fGrade !== 'all' && sub.userGrade !== fGrade) return;
+                    if (fHouse !== 'all' && sub.userHouse !== fHouse) return;
+                    if (fTask !== 'all' && sub.taskId !== fTask) return;
+
+                    const isReviewed = Boolean(sub.gradeScore || (sub.teacherFeedback && sub.teacherFeedback.text));
+                    if (fStatus === 'pending' && isReviewed) return;
+                    if (fStatus === 'reviewed' && !isReviewed) return;
+
+                    if (fSearch) {
+                        const hay = `${sub.userName || ''} ${sub.userEmail || ''} ${sub.userHouse || ''}`.toLowerCase();
+                        if (!hay.includes(fSearch)) return;
+                    }
+
+                    feedItems.push({ kind: 'submission', ts: sub.createdAt || 0, data: sub });
+                });
+            }
+
+            if (fType === 'all' || fType === 'comments') {
+                comments.forEach(cmt => {
+                    if (cmt.isTeacher) return;
+                    if (fGrade !== 'all' && cmt.userGrade !== fGrade) return;
+                    if (fHouse !== 'all' && cmt.userHouse !== fHouse) return;
+                    if (fTask !== 'all' && cmt.taskId !== fTask) return;
+
+                    const isReviewed = Boolean(cmt.teacherReply && cmt.teacherReply.text);
+                    if (fStatus === 'pending' && isReviewed) return;
+                    if (fStatus === 'reviewed' && !isReviewed) return;
+
+                    if (fSearch) {
+                        const hay = `${cmt.userName || ''} ${cmt.userEmail || ''} ${cmt.text || ''}`.toLowerCase();
+                        if (!hay.includes(fSearch)) return;
+                    }
+
+                    feedItems.push({ kind: 'comment', ts: cmt.createdAt || 0, data: cmt });
+                });
+            }
+
+            feedItems.sort((a, b) => b.ts - a.ts);
+
+            const countBadge = document.getElementById('teacher-filtered-results-count');
+            if (countBadge) countBadge.innerText = `${feedItems.length} resultados`;
+
+            const feedContainer = document.getElementById('teacher-filtered-feed-container');
+            if (feedContainer) {
+                if (feedItems.length === 0) {
+                    feedContainer.innerHTML = `
+                        <div class="bg-white border border-dashed border-gray-300 rounded-2xl p-10 text-center space-y-2">
+                            <p class="text-2xl">🔍</p>
+                            <p class="font-google font-bold text-gray-800 text-sm">No hay entregas ni comentarios con estos filtros</p>
+                            <p class="text-xs text-gray-500">Prueba seleccionando "Todos" en grado, salón o estado.</p>
+                        </div>`;
+                } else {
+                    feedContainer.innerHTML = feedItems.map(item => {
+                        if (item.kind === 'submission') {
+                            return renderSubmissionReviewCardHTML(item.data, taskMap[item.data.taskId]);
+                        }
+                        const cmt = item.data;
+                        const postObj = taskMap[cmt.taskId];
+                        const safeCmtId = cmt.id.replace(/[^a-zA-Z0-9_-]/g, '_');
+                        return `
+                            <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-2.5">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">💬 Comentario</span>
+                                        <span class="text-xs font-bold text-gray-900">${escapeHtml(cmt.userName)}</span>
+                                        <span class="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">${escapeHtml(cmt.userGrade)} • ${escapeHtml(cmt.userHouse)}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        ${postObj ? `<span class="text-[11px] font-semibold text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-lg">${escapeHtml(postObj.title || 'Actividad')}</span>` : ''}
+                                        <span class="text-[10px] text-gray-400">${escapeHtml(cmt.timestamp)}</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-800 whitespace-pre-line bg-slate-50 p-3 rounded-xl border border-slate-100">${escapeHtml(cmt.text)}</p>
+                                <div class="flex gap-2">
+                                    <input type="text" id="panel-reply-${safeCmtId}" value="${escapeHtml(cmt.teacherReply?.text || '')}" placeholder="Escribir respuesta como profesor..."
+                                        onkeydown="if(event.key==='Enter'){event.preventDefault();saveTeacherCommentReply('${cmt.id}', 'panel-reply-${safeCmtId}');}"
+                                        class="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-gray-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                                    <button type="button" onclick="saveTeacherCommentReply('${cmt.id}', 'panel-reply-${safeCmtId}')"
+                                        class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg cursor-pointer">
+                                        Responder
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // 2. Render Student Directory & Missing Work Table
+            const dGrade = document.getElementById('dir-filter-grade')?.value || 'all';
+            const dHouse = document.getElementById('dir-filter-house')?.value || 'all';
+            const dTask = document.getElementById('dir-filter-task')?.value || 'all';
+            const dStatus = document.getElementById('dir-filter-status')?.value || 'all';
+
+            const studentMap = new Map();
+            registeredStudents.forEach(s => {
+                if (s.email) studentMap.set(s.email.toLowerCase(), { ...s });
+            });
+            submissions.forEach(sub => {
+                const em = (sub.userEmail || '').toLowerCase();
+                if (em && !studentMap.has(em)) {
+                    studentMap.set(em, { name: sub.userName, email: em, grade: sub.userGrade, house: sub.userHouse });
+                }
+            });
+
+            const allStudents = Array.from(studentMap.values()).filter(st => {
+                if (dGrade !== 'all' && st.grade !== dGrade) return false;
+                if (dHouse !== 'all' && st.house !== dHouse) return false;
+                return true;
+            }).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            let deliveredCount = 0;
+            let missingCount = 0;
+
+            const rows = allStudents.map(st => {
+                const gradeTasks = tasks.filter(t => t.grade === st.grade);
+                const relevantTasks = dTask !== 'all' ? tasks.filter(t => t.id === dTask) : gradeTasks;
+                const studentSubs = submissions.filter(s => (s.userEmail || '').toLowerCase() === st.email.toLowerCase());
+
+                const hasSubmitted = dTask !== 'all'
+                    ? studentSubs.some(s => s.taskId === dTask)
+                    : (relevantTasks.length > 0 && relevantTasks.every(t => studentSubs.some(s => s.taskId === t.id)));
+
+                if (hasSubmitted) deliveredCount++;
+                else missingCount++;
+
+                return { st, hasSubmitted, studentSubs, relevantTasks };
+            }).filter(r => {
+                if (dStatus === 'missing' && r.hasSubmitted) return false;
+                if (dStatus === 'submitted' && !r.hasSubmitted) return false;
+                return true;
+            });
+
+            const summaryEl = document.getElementById('dir-summary-stats');
+            if (summaryEl) {
+                summaryEl.innerHTML = `Total alumnos: <strong>${allStudents.length}</strong> • <span class="text-emerald-700">Al día: ${deliveredCount}</span> • <span class="text-rose-600">Faltantes: ${missingCount}</span>`;
+            }
+
+            const dirContainer = document.getElementById('teacher-directory-container');
+            if (dirContainer) {
+                if (rows.length === 0) {
+                    dirContainer.innerHTML = `<div class="p-8 text-center text-xs text-gray-500">No hay estudiantes registrados que coincidan con este filtro.</div>`;
+                } else {
+                    dirContainer.innerHTML = `
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-[11px] font-bold uppercase text-gray-500">
+                                        <th class="py-3 px-4">Estudiante</th>
+                                        <th class="py-3 px-4">Grado / Salón</th>
+                                        <th class="py-3 px-4">Estado</th>
+                                        <th class="py-3 px-4">Entregas</th>
+                                        <th class="py-3 px-4 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 text-xs">
+                                    ${rows.map(({ st, hasSubmitted, studentSubs, relevantTasks }) => `
+                                        <tr class="hover:bg-gray-50/80">
+                                            <td class="py-3 px-4">
+                                                <p class="font-bold text-gray-900">${escapeHtml(st.name)}</p>
+                                                <p class="text-[11px] text-gray-400">${escapeHtml(st.email)}</p>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <span class="font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full text-[11px]">${escapeHtml(st.grade)} • ${escapeHtml(st.house)}</span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                ${hasSubmitted
+                                                    ? '<span class="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">✅ Entregado</span>'
+                                                    : '<span class="inline-flex items-center gap-1 text-[11px] font-bold bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-full">❌ Faltante</span>'}
+                                            </td>
+                                            <td class="py-3 px-4 font-semibold text-gray-700">
+                                                ${studentSubs.filter(s => relevantTasks.some(t => t.id === s.taskId)).length} / ${relevantTasks.length}
+                                            </td>
+                                            <td class="py-3 px-4 text-right">
+                                                <button type="button" onclick="openStudentEditModal('${escapeHtml(st.email)}')" class="text-xs font-bold text-blue-600 hover:underline cursor-pointer">
+                                                    ✏️ Editar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function isImageFile(fileObj) {
+            if (!fileObj) return false;
+            if (fileObj.type && fileObj.type.startsWith('image/')) return true;
+            if (fileObj.dataUrl && fileObj.dataUrl.startsWith('data:image/')) return true;
+            return /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(fileObj.name || '');
+        }
+
+        function isPdfFile(fileObj) {
+            if (!fileObj) return false;
+            if (fileObj.type === 'application/pdf') return true;
+            if (fileObj.dataUrl && fileObj.dataUrl.startsWith('data:application/pdf')) return true;
+            return /\.pdf$/i.test(fileObj.name || '');
+        }
+
+        function dataUrlToBlob(dataUrl) {
+            try {
+                const parts = dataUrl.split(',');
+                const mimeMatch = parts[0].match(/:(.*?);/);
+                const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+                const byteString = atob(parts[1]);
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                return new Blob([ab], { type: mime });
+            } catch (e) {
+                console.error('Error convirtiendo archivo a Blob:', e);
+                return null;
+            }
+        }
+
+        function renderSubmissionReviewCardHTML(sub, post) {
+            const safeUid = sub.id.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const filesList = Array.isArray(sub.files) ? sub.files : [];
+            const imageEntries = filesList
+                .map((f, idx) => ({ f, idx }))
+                .filter(entry => isImageFile(entry.f) && entry.f.dataUrl);
+
+            return `
+                <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-xs font-bold text-gray-900">${escapeHtml(sub.userName)}</span>
+                                <span class="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">${escapeHtml(sub.userGrade)} • ${escapeHtml(sub.userHouse)}</span>
+                                ${sub.gradeScore ? `<span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">Nota: ${escapeHtml(sub.gradeScore)}</span>` : ''}
+                            </div>
+                            <p class="text-[11px] text-gray-400">${escapeHtml(sub.userEmail)} • ${escapeHtml(sub.timestamp)}</p>
+                        </div>
+                        ${post ? `<span class="text-[11px] font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">${escapeHtml(post.title || 'Actividad')}</span>` : ''}
+                    </div>
+
+                    ${imageEntries.length > 0 ? `
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1">
+                            ${imageEntries.map(({ f, idx }) => `
+                                <div onclick="openFilePreviewModal('${sub.id}', ${idx})" class="group relative rounded-xl overflow-hidden border border-gray-200 bg-slate-100 aspect-video cursor-pointer hover:border-blue-400 transition-all shadow-2xs">
+                                    <img src="${f.dataUrl}" alt="${escapeHtml(f.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                    <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
+                                        <span class="opacity-0 group-hover:opacity-100 bg-white/95 text-gray-900 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm transition-opacity">
+                                            🔍 Ampliar Foto
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <div class="flex flex-wrap gap-2">
+                        ${filesList.map((f, fIdx) => `
+                            <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs">
+                                <i class="fa-solid ${isImageFile(f) ? 'fa-image text-blue-600' : 'fa-paperclip text-emerald-600'}"></i>
+                                <span class="font-medium max-w-[180px] truncate">${escapeHtml(f.name || `Archivo ${fIdx + 1}`)}</span>
+                                ${f.dataUrl ? `
+                                    <button type="button" onclick="openFilePreviewModal('${sub.id}', ${fIdx})" class="text-blue-600 hover:underline font-bold cursor-pointer">👁️ Ver</button>
+                                    <button type="button" onclick="downloadSubmissionFile('${sub.id}', ${fIdx})" class="text-emerald-700 hover:underline font-bold cursor-pointer">Descargar</button>
+                                ` : `<span class="text-[10px] text-rose-500 font-semibold">(Archivo sin datos)</span>`}
+                            </div>
+                        `).join('')}
+
+                        ${sub.externalLink ? `
+                            <a href="${escapeHtml(normalizeUrl(sub.externalLink))}" target="_blank" rel="noopener noreferrer"
+                               class="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-xl text-xs font-bold">
+                                <i class="fa-solid fa-link"></i>
+                                <span>Abrir Enlace Enviado</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        ` : ''}
+                    </div>
+
+                    <!-- Teacher Grading & Feedback Form -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-2 border-t border-gray-100">
+                        <div class="sm:col-span-3">
+                            <input type="text" id="grade-input-${safeUid}" value="${escapeHtml(sub.gradeScore || '')}" placeholder="Nota (ej: 5.0)"
+                                class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-gray-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                        </div>
+                        <div class="sm:col-span-7">
+                            <input type="text" id="fb-input-${safeUid}" value="${escapeHtml(sub.teacherFeedback?.text || '')}" placeholder="Retroalimentación para el estudiante..."
+                                class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs bg-gray-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <button type="button" onclick="saveSubmissionReview('${sub.id}', 'grade-input-${safeUid}', 'fb-input-${safeUid}')"
+                                class="w-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg transition-colors cursor-pointer">
+                                Guardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= STUDENT SUBMISSIONS & FILE HANDLING =================
+        function compressImageIfNeeded(file) {
+            return new Promise((resolve) => {
+                const isImg = (file.type && file.type.startsWith('image/')) || /\.(png|jpe?g|gif|webp|bmp)$/i.test(file.name || '');
+                if (!isImg) {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve({ name: file.name, type: file.type || 'application/octet-stream', dataUrl: reader.result });
+                    reader.onerror = () => resolve(null);
+                    reader.readAsDataURL(file);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let maxDim = 1100;
+                        let quality = 0.72;
+                        let dataUrl = '';
+
+                        for (let attempt = 0; attempt < 3; attempt++) {
+                            let w = img.width;
+                            let h = img.height;
+                            if (w > maxDim || h > maxDim) {
+                                if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                                else { w = Math.round(w * maxDim / h); h = maxDim; }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, w, h);
+                            ctx.drawImage(img, 0, 0, w, h);
+                            dataUrl = canvas.toDataURL('image/jpeg', quality);
+                            if (dataUrl.length <= 380000) break;
+                            maxDim = Math.round(maxDim * 0.75);
+                            quality = Math.max(0.5, quality - 0.12);
+                        }
+
+                        resolve({ name: file.name, type: 'image/jpeg', dataUrl });
+                    };
+                    img.onerror = () => {
+                        // Fallback if browser cannot decode special image format (e.g. HEIC)
+                        resolve({ name: file.name, type: file.type || 'application/octet-stream', dataUrl: ev.target.result });
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function uploadFilesAndSubmit(containerId, postId) {
+            if (!currentUser) {
+                showAuthLandingScreen();
+                showToast('Ingresa con tu correo de estudiante para realizar entregas', 'info');
+                return;
+            }
+
+            const fileInput = document.getElementById(`file-input-${containerId}-${postId}`);
+            const linkInput = document.getElementById(`link-input-${containerId}-${postId}`);
+            const submitBtn = document.getElementById(`submit-btn-${containerId}-${postId}`);
+            const files = fileInput ? fileInput.files : [];
+            const linkVal = linkInput ? normalizeUrl(linkInput.value) : '';
+
+            const existingSub = submissions.find(s => s.taskId === postId && s.userEmail === currentUser.email);
+
+            if (files.length === 0 && !linkVal && (!existingSub || !existingSub.files || existingSub.files.length === 0)) {
+                showToast('Por favor adjunta al menos una foto/archivo o ingresa un enlace.', 'info');
+                return;
+            }
+
+            for (const f of Array.from(files)) {
+                const isImg = (f.type && f.type.startsWith('image/')) || /\.(png|jpe?g|gif|webp|bmp)$/i.test(f.name || '');
+                if (!isImg && f.size > 650 * 1024) {
+                    showToast(`El archivo "${f.name}" supera 650 KB. Súbelo a Google Drive y pega el enlace abajo.`, 'error');
+                    return;
+                }
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Procesando entrega...';
+            }
+
+            const filePromises = Array.from(files).map(file => compressImageIfNeeded(file));
+
+            Promise.all(filePromises).then(async (rawProcessedFiles) => {
+                const newFiles = rawProcessedFiles.filter(Boolean);
+                const nowStr = new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+                const combinedFiles = [...(existingSub?.files || []), ...newFiles];
+
+                // Ensure total payload fits comfortably within Firestore's 1MB document limit
+                const approxBytes = JSON.stringify(combinedFiles).length;
+                if (approxBytes > 900000) {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = existingSub ? 'Actualizar Reenvío' : 'Completar Entrega';
+                    }
+                    showToast('Los archivos adjuntos superan el límite permitido (900 KB total). Quita algún archivo o usa un enlace de Google Drive.', 'error');
+                    return;
+                }
+
+                let targetSub;
+                if (existingSub) {
+                    existingSub.files = combinedFiles;
+                    existingSub.externalLink = linkVal;
+                    existingSub.timestamp = nowStr;
+                    existingSub.createdAt = Date.now();
+                    targetSub = existingSub;
+                } else {
+                    const newSubId = 'sub-' + Date.now();
+                    targetSub = {
+                        id: newSubId,
+                        taskId: postId,
+                        userName: currentUser.name,
+                        userEmail: currentUser.email,
+                        userGrade: currentUser.grade,
+                        userHouse: currentUser.house,
+                        files: combinedFiles,
+                        externalLink: linkVal,
+                        gradeScore: '',
+                        teacherFeedback: null,
+                        timestamp: nowStr,
+                        createdAt: Date.now()
+                    };
+                    submissions.push(targetSub);
+                }
+
+                saveSubmissionsToStorage();
+                const syncedOk = await syncDocUpsert('submissions', targetSub.id, targetSub);
+
+                openSectionIds.add(`submission-sec-${containerId}-${postId}`);
+                renderAllViews();
+                if (syncedOk === false) {
+                    showToast('Guardado localmente, pero hubo un problema al subir a la nube. Intenta con una imagen más ligera o enlace de Drive.', 'error');
+                } else {
+                    showToast('¡Tarea entregada correctamente! ✅', 'success');
+                }
+            });
+        }
+
+        function removeSubmittedFile(containerId, postId, fileIndex) {
+            if (!currentUser) return;
+            const sub = submissions.find(s => s.taskId === postId && s.userEmail === currentUser.email);
+            if (!sub || !sub.files) return;
+            sub.files.splice(fileIndex, 1);
+            saveSubmissionsToStorage();
+            syncDocUpsert('submissions', sub.id, sub);
+            openSectionIds.add(`submission-sec-${containerId}-${postId}`);
+            renderAllViews();
+            showToast('Archivo quitado de tu entrega', 'info');
+        }
+
+        function cancelSubmission(containerId, postId) {
+            if (!currentUser) return;
+            const sub = submissions.find(s => s.taskId === postId && s.userEmail === currentUser.email);
+            if (!sub) return;
+            submissions = submissions.filter(s => s.id !== sub.id);
+            saveSubmissionsToStorage();
+            syncDocDelete('submissions', sub.id);
+            openSectionIds.add(`submission-sec-${containerId}-${postId}`);
+            renderAllViews();
+            showToast('Entrega anulada', 'info');
+        }
+
+        let activePreviewBlobUrl = null;
+
+        function downloadSubmissionFile(subId, fileIdx) {
+            const sub = submissions.find(s => s.id === subId);
+            if (!sub || !sub.files || !sub.files[fileIdx]) {
+                showToast('No se encontró el archivo para descargar.', 'error');
+                return;
+            }
+            const fileObj = sub.files[fileIdx];
+            if (!fileObj.dataUrl) {
+                showToast('El archivo no contiene datos descargables.', 'error');
+                return;
+            }
+
+            const blob = dataUrlToBlob(fileObj.dataUrl);
+            const downloadUrl = blob ? URL.createObjectURL(blob) : fileObj.dataUrl;
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = fileObj.name || 'evidencia_estudiante';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            if (blob) {
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
+            }
+        }
+
+        function openFilePreviewModal(subId, fileIdx) {
+            const sub = submissions.find(s => s.id === subId);
+            if (!sub || !sub.files || !sub.files[fileIdx]) {
+                showToast('No se pudo localizar el archivo adjunto.', 'error');
+                return;
+            }
+            const fileObj = sub.files[fileIdx];
+            if (!fileObj.dataUrl) {
+                showToast('Este archivo no tiene vista previa disponible.', 'error');
+                return;
+            }
+
+            if (activePreviewBlobUrl) {
+                URL.revokeObjectURL(activePreviewBlobUrl);
+                activePreviewBlobUrl = null;
+            }
+
+            const blob = dataUrlToBlob(fileObj.dataUrl);
+            const viewUrl = blob ? URL.createObjectURL(blob) : fileObj.dataUrl;
+            if (blob) activePreviewBlobUrl = viewUrl;
+
+            document.getElementById('preview-modal-title').innerText = fileObj.name || 'Archivo adjunto';
+            document.getElementById('preview-modal-subtitle').innerText = `Entregado por ${sub.userName} (${sub.userGrade} • ${sub.userHouse})`;
+
+            const dlLink = document.getElementById('preview-modal-download');
+            dlLink.href = viewUrl;
+            dlLink.download = fileObj.name || 'archivo';
+
+            const body = document.getElementById('preview-modal-body');
+            if (isImageFile(fileObj)) {
+                body.innerHTML = `
+                    <div class="flex flex-col items-center gap-3 w-full">
+                        <img src="${viewUrl}" alt="${escapeHtml(fileObj.name)}" class="max-h-[70vh] w-auto rounded-xl shadow-md object-contain bg-white">
+                        <a href="${viewUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-700 hover:underline">
+                            ↗ Abrir imagen en tamaño completo en pestaña nueva
+                        </a>
+                    </div>`;
+            } else if (isPdfFile(fileObj)) {
+                body.innerHTML = `
+                    <div class="flex flex-col items-center gap-3 w-full h-full">
+                        <iframe src="${viewUrl}" class="w-full h-[66vh] rounded-xl border border-gray-300 bg-white"></iframe>
+                        <a href="${viewUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl">
+                            <i class="fa-solid fa-up-right-from-square"></i> Abrir PDF en pestaña nueva
+                        </a>
+                    </div>`;
+            } else {
+                body.innerHTML = `
+                    <div class="text-center p-8 space-y-3 bg-white rounded-2xl border border-gray-200 max-w-md">
+                        <i class="fa-solid fa-file-lines text-4xl text-emerald-600"></i>
+                        <p class="text-sm font-bold text-gray-800">${escapeHtml(fileObj.name)}</p>
+                        <p class="text-xs text-gray-500">Este formato de documento se abre mejor descargándolo a tu equipo.</p>
+                        <button type="button" onclick="downloadSubmissionFile('${sub.id}', ${fileIdx})" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer">
+                            <i class="fa-solid fa-download"></i> Descargar Documento
+                        </button>
+                    </div>`;
+            }
+            document.getElementById('preview-modal').classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.add('hidden');
+            if (activePreviewBlobUrl) {
+                URL.revokeObjectURL(activePreviewBlobUrl);
+                activePreviewBlobUrl = null;
+            }
+        }
+
+        function openStudentEditModal(email) {
+            if (userRole !== 'teacher') return;
+            const st = registeredStudents.find(s => s.email === email);
+            if (!st) return;
+            document.getElementById('edit-student-email').value = st.email;
+            document.getElementById('edit-student-name').value = st.name;
+            document.getElementById('edit-student-grade').value = st.grade;
+            document.getElementById('edit-student-house').value = st.house;
+            document.getElementById('student-edit-modal').classList.remove('hidden');
+        }
+
+        function closeStudentEditModal() {
+            document.getElementById('student-edit-modal').classList.add('hidden');
+        }
+
+        function saveStudentEdit(e) {
+            e.preventDefault();
+            if (userRole !== 'teacher') return;
+            const email = document.getElementById('edit-student-email').value;
+            const name = document.getElementById('edit-student-name').value.trim();
+            const grade = document.getElementById('edit-student-grade').value;
+            const house = document.getElementById('edit-student-house').value;
+
+            const idx = registeredStudents.findIndex(s => s.email === email);
+            if (idx !== -1) {
+                registeredStudents[idx] = { ...registeredStudents[idx], name, grade, house };
+                saveStudentsToStorage();
+                syncDocUpsert('students', email, registeredStudents[idx]);
+            } else {
+                const newStudent = { name, email, grade, house, registeredAt: Date.now() };
+                registeredStudents.push(newStudent);
+                saveStudentsToStorage();
+                syncDocUpsert('students', email, newStudent);
+            }
+
+            submissions.forEach(s => {
+                if (s.userEmail === email) {
+                    s.userName = name;
+                    s.userGrade = grade;
+                    s.userHouse = house;
+                    syncDocUpsert('submissions', s.id, s);
+                }
+            });
+            saveSubmissionsToStorage();
+
+            closeStudentEditModal();
+            renderAllViews();
+            showToast('Datos del estudiante actualizados ✓', 'success');
+        }
+
+        function exportFilteredGradesToCSV() {
+            if (userRole !== 'teacher') return;
+            const fGrade = document.getElementById('filter-panel-grade')?.value || 'all';
+            const fHouse = document.getElementById('filter-panel-house')?.value || 'all';
+            const fTask = document.getElementById('filter-panel-task')?.value || 'all';
+
+            const taskMap = {};
+            tasks.forEach(t => { taskMap[t.id] = t.title || 'Actividad'; });
+
+            const filteredSubs = submissions.filter(s => {
+                if (fGrade !== 'all' && s.userGrade !== fGrade) return false;
+                if (fHouse !== 'all' && s.userHouse !== fHouse) return false;
+                if (fTask !== 'all' && s.taskId !== fTask) return false;
+                return true;
+            });
+
+            const headers = ['Estudiante', 'Correo', 'Grado', 'Salón', 'Actividad', 'Fecha Entrega', 'Archivos', 'Enlace', 'Nota', 'Retroalimentación'];
+            const csvRows = [headers.join(',')];
+
+            filteredSubs.forEach(s => {
+                const row = [
+                    `"${(s.userName || '').replace(/"/g, '""')}"`,
+                    `"${(s.userEmail || '').replace(/"/g, '""')}"`,
+                    `"${(s.userGrade || '').replace(/"/g, '""')}"`,
+                    `"${(s.userHouse || '').replace(/"/g, '""')}"`,
+                    `"${(taskMap[s.taskId] || 'Actividad').replace(/"/g, '""')}"`,
+                    `"${(s.timestamp || '').replace(/"/g, '""')}"`,
+                    `"${(s.files || []).map(f => f.name).join(' | ').replace(/"/g, '""')}"`,
+                    `"${(s.externalLink || '').replace(/"/g, '""')}"`,
+                    `"${(s.gradeScore || '').replace(/"/g, '""')}"`,
+                    `"${(s.teacherFeedback?.text || '').replace(/"/g, '""')}"`
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Planilla_Geometria_${fGrade}_${fHouse}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Planilla Excel (.CSV) descargada 📊', 'success');
+        }
+
+        function updateSyncBadge(mode) {
+            const badge = document.getElementById('sync-status-badge');
+            if (!badge) return;
+            if (mode === 'cloud') {
+                badge.className = 'hidden md:inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap';
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Nube Activa ☁️';
+            } else {
+                badge.className = 'hidden md:inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 whitespace-nowrap';
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span> Modo Local';
+            }
+        }
+
+        // Global Click Handlers to Close Popovers
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#notif-bell-btn') && !e.target.closest('#notif-dropdown')) {
+                document.getElementById('notif-dropdown')?.classList.add('hidden');
+            }
+            if (!e.target.closest('#tools-create-dropdown-wrapper')) {
+                document.getElementById('tools-create-menu')?.classList.add('hidden');
+            }
+            if (!e.target.closest('#context-menu')) {
+                document.getElementById('context-menu')?.classList.add('hidden');
+            }
+            document.querySelectorAll('.topic-options-popover').forEach(el => el.classList.add('hidden'));
+        });
+
+        // Initial Boot
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentUser) {
+                hideAuthLandingScreen();
+            } else {
+                showAuthLandingScreen();
+            }
+            renderUserProfileHeader();
+            renderAllViews();
+        });
+    </script>
+
+    <!-- ================= CLOUD SYNC MODULE (FIREBASE FIRESTORE) ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        async function initCloudSync() {
+            try {
+                if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+                    updateSyncBadge('local');
+                    return;
+                }
+
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                const user = auth.currentUser;
+                if (!user) {
+                    updateSyncBadge('local');
+                    return;
+                }
+
+                updateSyncBadge('cloud');
+
+                // Expose Upsert & Delete to main script
+                window.__cloudUpsert = async (collectionName, docId, dataObj) => {
+                    if (!auth.currentUser) return false;
+                    try {
+                        const ref = doc(db, 'artifacts', appId, 'public', 'data', collectionName, String(docId));
+                        await setDoc(ref, dataObj, { merge: true });
+                        return true;
+                    } catch (err) {
+                        console.error('Cloud upsert error:', err);
+                        return false;
+                    }
+                };
+
+                window.__cloudDelete = async (collectionName, docId) => {
+                    if (!auth.currentUser) return;
+                    try {
+                        const ref = doc(db, 'artifacts', appId, 'public', 'data', collectionName, String(docId));
+                        await deleteDoc(ref);
+                    } catch (err) {
+                        console.warn('Cloud delete fallback:', err);
+                    }
+                };
+
+                const attachCollectionListener = (colName, onDataReceived) => {
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', colName);
+                    onSnapshot(colRef, (snapshot) => {
+                        const docs = [];
+                        snapshot.forEach(d => docs.push({ id: d.id, ...d.data() }));
+                        onDataReceived(docs);
+                    }, (err) => {
+                        console.warn(`Snapshot error on ${colName}:`, err);
+                    });
+                };
+
+                const seeds = window.getInitialSeedData ? window.getInitialSeedData() : null;
+
+                attachCollectionListener('tasks', (docs) => {
+                    if (docs.length > 0) {
+                        tasks = docs;
+                        saveTasksToStorage();
+                        renderAllViews();
+                    } else if (seeds && seeds.defaultTasks) {
+                        seeds.defaultTasks.forEach(t => window.__cloudUpsert('tasks', t.id, t));
+                    }
+                });
+
+                attachCollectionListener('announcements', (docs) => {
+                    if (docs.length > 0) {
+                        announcements = docs;
+                        saveAnnouncementsToStorage();
+                        renderAllViews();
+                    } else if (seeds && seeds.defaultAnnouncements) {
+                        seeds.defaultAnnouncements.forEach(a => window.__cloudUpsert('announcements', a.id, a));
+                    }
+                });
+
+                attachCollectionListener('learningIntentions', (docs) => {
+                    if (docs.length > 0) {
+                        learningIntentions = docs;
+                        saveLearningIntentionsToStorage();
+                        renderAllViews();
+                    } else if (seeds && seeds.defaultLearningIntentions) {
+                        seeds.defaultLearningIntentions.forEach(li => window.__cloudUpsert('learningIntentions', li.id, li));
+                    }
+                });
+
+                attachCollectionListener('geometryTools', (docs) => {
+                    if (docs.length > 0) {
+                        geometryTools = docs;
+                        saveGeometryToolsToStorage();
+                        renderAllViews();
+                    } else if (seeds && seeds.defaultGeometryTools) {
+                        seeds.defaultGeometryTools.forEach(gt => window.__cloudUpsert('geometryTools', gt.id, gt));
+                    }
+                });
+
+                attachCollectionListener('submissions', (docs) => {
+                    submissions = docs;
+                    saveSubmissionsToStorage();
+                    renderAllViews();
+                });
+
+                attachCollectionListener('comments', (docs) => {
+                    if (docs.length > 0) {
+                        comments = docs;
+                        saveCommentsToStorage();
+                        renderAllViews();
+                    }
+                });
+
+                attachCollectionListener('students', (docs) => {
+                    if (docs.length > 0) {
+                        registeredStudents = docs;
+                        saveStudentsToStorage();
+                        renderAllViews();
+                    }
+                });
+
+                attachCollectionListener('settings', (docs) => {
+                    const bannerDoc = docs.find(d => d.id === 'bannerConfigs');
+                    if (bannerDoc) {
+                        const { id, ...rest } = bannerDoc;
+                        bannerConfigs = { ...bannerConfigs, ...rest };
+                        saveBannerConfigsToStorage();
+                        applyBannerAndHeaderTexts();
+                    }
+                });
+            } catch (err) {
+                console.warn('Cloud sync unavailable, running in local mode:', err);
+                updateSyncBadge('local');
+            }
+        }
+
+        initCloudSync();
+    </script>
+</body>
+</html>
